@@ -1,4 +1,4 @@
-TOValueTransition
-=================
+#TOValueTransition
 
-Some classes to provide an easy to use possibility to "animate" float values.
+TOValueTransition is a small and easy to use collection of classes used for simple floating value "animations".
+Use this library for time based interpolations between two values.
