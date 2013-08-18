@@ -24,6 +24,7 @@
 - (void)displayDot;
 
 - (void)applyPosition:(CGPoint)position;
+- (void)updatePositionLabel:(CGPoint)position;
 
 @end
 
@@ -85,9 +86,6 @@
     dotLayer.backgroundColor = [[UIColor whiteColor] CGColor];
     dotLayer.position = CGPointMake(10.0, 10.0);
     
-    dotLayer.opacity = 0.0;
-    dotLayer.transform = CATransform3DMakeScale(2.0, 2.0, 0.0);
-    
     [[dotContainer layer] addSublayer:dotLayer];
     self.dot = dotLayer;
     
@@ -96,22 +94,25 @@
 
 - (void)displayDot{
     
+    self.dotContainer.transform = CGAffineTransformMakeScale(2.0, 2.0);
+    self.dotContainer.alpha = 0.0;
+    
     [self.view addSubview:self.dotContainer];
     [self applyPosition:CGPointMake(160.0, 280.0)];
     
-    [TOValueTransition interpolateFrom:0.0 to:1.0 duration:1.4 easing:TOEasingSineEaseOut progress:^(CGFloat currentValue) {
+    [TOValueTransition interpolateFrom:0.0 to:1.0 duration:3.4 easing:TOEasingElasticEaseOut progress:^(CGFloat currentValue) {
         
-        self.dot.opacity = currentValue;
+        self.dotContainer.alpha = currentValue;
         
         CGFloat scale = 2.0 - currentValue * (2.0 - 1.0);
-        self.dot.transform = CATransform3DMakeScale(scale, scale, 0.0);
+        self.dotContainer.transform = CGAffineTransformMakeScale(scale, scale);
         
     } completed:^(CGFloat endValue) {
         
-        self.dot.opacity = endValue;
+        self.dotContainer.alpha = endValue;
         
         CGFloat scale = 2.0 - endValue * (2.0 - 1.0);
-        self.dot.transform = CATransform3DMakeScale(scale, scale, 0.0);
+        self.dotContainer.transform = CGAffineTransformMakeScale(scale, scale);
         
     } cancelled:^(CGFloat cancelledValue) {
         
@@ -120,7 +121,15 @@
 
 - (void)applyPosition:(CGPoint)position{
     
-    self.dotContainer.frame = CGRectMake(position.x - self.dotContainer.frame.size.width / 2, position.y - self.dotContainer.frame.size.height / 2, self.dotContainer.frame.size.width, self.dotContainer.frame.size.height);
+    CGPoint adjustedPosition = CGPointMake(position.x - self.dotContainer.frame.size.width / 2, position.y - self.dotContainer.frame.size.height / 2);
+    self.dotContainer.frame = CGRectMake(adjustedPosition.x, adjustedPosition.y, self.dotContainer.frame.size.width, self.dotContainer.frame.size.height);
+    
+    [self updatePositionLabel:adjustedPosition];
+}
+
+- (void)updatePositionLabel:(CGPoint)position{
+    
+    [self.positionLabel setText:[NSString stringWithFormat:@"(%d :: %d)", (int)position.x, (int)position.y]];
 }
 
 @end

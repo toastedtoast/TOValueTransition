@@ -15,7 +15,7 @@ typedef void(^TOValueTransitionCompleted)(CGFloat endValue);
 typedef void(^TOValueTransitionCancelled)(CGFloat cancelledValue);
 
 /**
- A class to "animate" the interpolation of CGFloat Values. This is a one time use class. You cannot reuse the same instance.
+ A class to "animate" the interpolation of CGFloat Values. One instance is for single use only. You cannot reuse the same instance. Just create a new one.
  */
 @interface TOValueTransition : NSObject
 

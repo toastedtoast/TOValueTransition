@@ -10,4 +10,6 @@
 
 @interface TOViewController : UIViewController
 
+@property (weak, nonatomic) IBOutlet UILabel *positionLabel;
+
 @end
