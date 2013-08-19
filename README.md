@@ -47,5 +47,7 @@ In the end there is only one important static method for **TOValueTransition**.
 
 To cancel a transition you can call `-(BOOL)cancel;` This will stop the progress and will not call the completed block.
 
+If you take a look at the Sample project (it's an ios application) you can see how to use TOValueTransition to animate a white dot on the screen.
+
 ##Contact
 For any questions or information feel free to contact me  [@toastedtoast](http://www.twitter.com/toastedtoast)
