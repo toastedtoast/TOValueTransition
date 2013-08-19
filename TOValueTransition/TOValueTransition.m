@@ -8,8 +8,6 @@
 #import "TOValueTransition.h"
 #import "TOMath.h"
 
-#import "NSTimer+BlocksKit.h"
-
 @interface TOValueTransitionHost : NSObject
 
 + (void)addTransition:(TOValueTransition *)transition;
@@ -61,7 +59,8 @@ static NSMutableArray *activeTransitions;
 - (void)doCompleted:(CGFloat)value;
 - (void)doCancelled:(CGFloat)value;
 
-- (BOOL)cancelTimers;
+- (void)handleBeat:(NSTimer *)timer;
+- (BOOL)cancelBeats;
 
 @end
 
@@ -79,32 +78,8 @@ static NSMutableArray *activeTransitions;
     
     [TOValueTransitionHost addTransition:vt];
     
-    NSTimer *t = [NSTimer timerWithTimeInterval:(NSTimeInterval)kTOValueTransitionBeat block:^(NSTimeInterval time) {
-        
-        if (vt.beginTimestamp == 0.0) vt.beginTimestamp = CFAbsoluteTimeGetCurrent();
-        
-        if (vt.progressTimestamp == 0.0) vt.progressTimestamp = CFAbsoluteTimeGetCurrent();
-        
-        CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
-        NSTimeInterval diff = fabs(now - vt.beginTimestamp);
-        
-        CGFloat ratio = (diff / duration);
-        ratio = [TOMath intermediate:ratio min:0.0 max:1.0];
-        ratio = [TOValueTransition easing:ratio identifier:easingId];
-        
-        CGFloat v = baseValue + ((targetValue - baseValue) * ratio);
-        
-        [vt doProgress:v];
-        
-        if (diff > duration){
-            
-            [vt doCompleted:targetValue];
-        }
-        
-        vt.progressTimestamp = now;
-        
-    } repeats:YES];
-    
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithDouble:duration], @"duration", [NSNumber numberWithFloat:baseValue], @"baseValue", [NSNumber numberWithFloat:targetValue], @"targetValue", easingId, @"easing", nil];
+    NSTimer *t = [NSTimer timerWithTimeInterval:(NSTimeInterval)kTOValueTransitionBeat target:vt selector:@selector(handleBeat:) userInfo:userInfo repeats:YES];
     
     vt.heartbeat = t;
     [[NSRunLoop currentRunLoop] addTimer:vt.heartbeat forMode:NSRunLoopCommonModes];
@@ -180,7 +155,7 @@ static NSMutableArray *activeTransitions;
     self.currentValue = value;
     if (self.completedHandler != nil) self.completedHandler(value);
     
-    [self cancelTimers];
+    [self cancelBeats];
     [TOValueTransitionHost removeTransition:self];
 }
 
@@ -188,11 +163,41 @@ static NSMutableArray *activeTransitions;
     
     if (self.cancelledHandler != nil) self.cancelledHandler(value);
     
-    [self cancelTimers];
+    [self cancelBeats];
     [TOValueTransitionHost removeTransition:self];
 }
 
-- (BOOL)cancelTimers{
+- (void)handleBeat:(NSTimer *)timer{
+    
+    if (self.beginTimestamp == 0.0) self.beginTimestamp = CFAbsoluteTimeGetCurrent();
+    if (self.progressTimestamp == 0.0) self.progressTimestamp = CFAbsoluteTimeGetCurrent();
+    
+    NSTimeInterval duration = [[timer.userInfo objectForKey:@"duration"] doubleValue];
+    CGFloat baseValue = [[timer.userInfo objectForKey:@"baseValue"] floatValue];
+    CGFloat targetValue = [[timer.userInfo objectForKey:@"targetValue"] floatValue];
+    NSString *easing = [timer.userInfo objectForKey:@"easing"];
+    
+    CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
+    NSTimeInterval diff = fabs(now - self.beginTimestamp);
+    
+    CGFloat ratio = (diff / duration);
+    ratio = [TOMath intermediate:ratio min:0.0 max:1.0];
+    ratio = [TOValueTransition easing:ratio identifier:easing];
+    
+    CGFloat v = baseValue + ((targetValue - baseValue) * ratio);
+    
+    [self doProgress:v];
+    
+    if (diff > duration){
+        
+        [self doCompleted:targetValue];
+    }
+    
+    self.progressTimestamp = now;
+    
+}
+
+- (BOOL)cancelBeats{
     
     if (!self.running) return NO;
     
