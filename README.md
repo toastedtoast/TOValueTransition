@@ -7,7 +7,7 @@ As **TOValueTransition** supports many easing functions, you might want to use i
 
 ##Setup
 Simply add all files from /TOValueTransition to your project and target.  
-**Cocoapods will soon be available.**
+**Cocoapods will be available soon.**
 
 ##Usage
 In the end there is only one important static method for **TOValueTransition**.  
