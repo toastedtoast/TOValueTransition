@@ -43,6 +43,7 @@ static NSMutableArray *activeTransitions;
     
 }
 
+@property (nonatomic, assign) CFAbsoluteTime delayTimestamp;
 @property (nonatomic, assign) CFAbsoluteTime beginTimestamp;
 @property (nonatomic, assign) CFAbsoluteTime progressTimestamp;
 
@@ -83,6 +84,16 @@ static NSMutableArray *activeTransitions;
     
     vt.heartbeat = t;
     [[NSRunLoop currentRunLoop] addTimer:vt.heartbeat forMode:NSRunLoopCommonModes];
+    
+    return vt;
+}
+
++ (TOValueTransition *)interpolateFrom:(CGFloat)baseValue to:(CGFloat)targetValue duration:(NSTimeInterval)duration delay:(NSTimeInterval)delay easing:(NSString *)easingId progress:(TOValueTransitionProgress)progressHandler completed:(TOValueTransitionCompleted)completedHandler cancelled:(TOValueTransitionCancelled)cancelledHandler{
+    
+    TOValueTransition *vt = [TOValueTransition interpolateFrom:baseValue to:targetValue duration:duration easing:easingId progress:progressHandler completed:completedHandler cancelled:cancelledHandler];
+    
+    CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
+    vt.delayTimestamp =  now + delay;
     
     return vt;
 }
@@ -168,6 +179,8 @@ static NSMutableArray *activeTransitions;
 }
 
 - (void)handleBeat:(NSTimer *)timer{
+    
+    if (self.delayTimestamp > CFAbsoluteTimeGetCurrent()) return;
     
     if (self.beginTimestamp == 0.0) self.beginTimestamp = CFAbsoluteTimeGetCurrent();
     if (self.progressTimestamp == 0.0) self.progressTimestamp = CFAbsoluteTimeGetCurrent();

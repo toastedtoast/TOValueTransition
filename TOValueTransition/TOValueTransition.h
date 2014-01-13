@@ -36,6 +36,21 @@ typedef void(^TOValueTransitionCancelled)(CGFloat cancelledValue);
 + (TOValueTransition *)interpolateFrom:(CGFloat)baseValue to:(CGFloat)targetValue duration:(NSTimeInterval)duration easing:(NSString *)easingId progress:(TOValueTransitionProgress)progressHandler completed:(TOValueTransitionCompleted)completedHandler cancelled:(TOValueTransitionCancelled)cancelledHandler;
 
 /**
+ Creates a new instance of TOValueTransition and starts the Transition.
+ @param baseValue Value to start from.
+ @param targetValue Endvalue.
+ @param duration Duration of the transition.
+ @param duration Tghe Delay until the transition begins.
+ @param easingId Identifier for the easing. Use one of the Identifier declared in TOEasing.h.
+ @param progressHandler Block for progressUpdates.
+ @param completedHandler Block for completed.
+ @param cancelledHandler Block for cancelled.
+ @see TOEasing.h
+ @return The transitioning instance.
+ */
++ (TOValueTransition *)interpolateFrom:(CGFloat)baseValue to:(CGFloat)targetValue duration:(NSTimeInterval)duration delay:(NSTimeInterval)delay easing:(NSString *)easingId progress:(TOValueTransitionProgress)progressHandler completed:(TOValueTransitionCompleted)completedHandler cancelled:(TOValueTransitionCancelled)cancelledHandler;
+
+/**
  Cancels the currently running interpolation.
  @return Indicator if the instance really was cancelled. If this method returns NO, the transition was not running anylonger.
  */
