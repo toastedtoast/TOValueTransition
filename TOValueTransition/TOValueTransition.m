@@ -43,7 +43,8 @@ static NSMutableArray *activeTransitions;
     
 }
 
-@property (nonatomic, assign) CFAbsoluteTime delayTimestamp;
+@property (nonatomic, assign) CGFloat delay;
+@property (nonatomic, assign) CFAbsoluteTime baseTimestamp;
 @property (nonatomic, assign) CFAbsoluteTime beginTimestamp;
 @property (nonatomic, assign) CFAbsoluteTime progressTimestamp;
 
@@ -70,6 +71,7 @@ static NSMutableArray *activeTransitions;
 + (TOValueTransition *)interpolateFrom:(CGFloat)baseValue to:(CGFloat)targetValue duration:(NSTimeInterval)duration easing:(NSString *)easingId progress:(TOValueTransitionProgress)progressHandler completed:(TOValueTransitionCompleted)completedHandler cancelled:(TOValueTransitionCancelled)cancelledHandler{
     
     TOValueTransition *vt = [[TOValueTransition alloc] init];
+    vt.baseTimestamp = CFAbsoluteTimeGetCurrent();
     
     vt.cancelledHandler = cancelledHandler;
     vt.completedHandler = completedHandler;
@@ -91,9 +93,7 @@ static NSMutableArray *activeTransitions;
 + (TOValueTransition *)interpolateFrom:(CGFloat)baseValue to:(CGFloat)targetValue duration:(NSTimeInterval)duration delay:(NSTimeInterval)delay easing:(NSString *)easingId progress:(TOValueTransitionProgress)progressHandler completed:(TOValueTransitionCompleted)completedHandler cancelled:(TOValueTransitionCancelled)cancelledHandler{
     
     TOValueTransition *vt = [TOValueTransition interpolateFrom:baseValue to:targetValue duration:duration easing:easingId progress:progressHandler completed:completedHandler cancelled:cancelledHandler];
-    
-    CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
-    vt.delayTimestamp =  now + delay;
+    vt.delay =  delay;
     
     return vt;
 }
@@ -180,7 +180,7 @@ static NSMutableArray *activeTransitions;
 
 - (void)handleBeat:(NSTimer *)timer{
     
-    if (self.delayTimestamp > CFAbsoluteTimeGetCurrent()) return;
+    if (self.baseTimestamp + self.delay > CFAbsoluteTimeGetCurrent()) return;
     
     if (self.beginTimestamp == 0.0) self.beginTimestamp = CFAbsoluteTimeGetCurrent();
     if (self.progressTimestamp == 0.0) self.progressTimestamp = CFAbsoluteTimeGetCurrent();

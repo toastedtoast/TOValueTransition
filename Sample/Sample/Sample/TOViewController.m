@@ -58,7 +58,7 @@
         [self.runningTransition cancel];
         self.runningTransition = nil;
     }
-        self.runningTransition = [TOValueTransition interpolateFrom:0.0 to:1.0 duration:1.9 easing:TOEasingElasticEaseOut    progress:^(CGFloat currentValue) {
+    self.runningTransition = [TOValueTransition interpolateFrom:0.0 to:1.0 duration:1.9 delay:0.1 easing:TOEasingElasticEaseOut    progress:^(CGFloat currentValue) {
           
             [self applyPosition:CGPointMake(current.x + ((target.x - current.x) *currentValue), current.y + ((target.y - current.y) *currentValue))];
             
