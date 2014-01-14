@@ -6,8 +6,14 @@ Use this library for time based interpolations between two values.
 As **TOValueTransition** supports many easing functions, you might want to use it as animation library to easily animate your views.
 
 ##Setup
-Simply add all files from /TOValueTransition to your project and target.  
-**Cocoapods will be available soon.**
+
+**CocoaPods**   
+Simply add `pod 'TOValueTransition', '~> 1.0.1'` to your podfile.  
+For more information about CocoaPods and the podfile visit http://guides.cocoapods.org/
+
+**Manual**  
+Add all files from /TOValueTransition to your project and target.  
+
 
 ##Usage
 In the end there is only one important static method for **TOValueTransition**.  
