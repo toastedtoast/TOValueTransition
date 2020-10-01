@@ -1,11 +1,11 @@
-#TOValueTransition
+# TOValueTransition
 
 **TOValueTransition** is a small and easy to use collection of classes for simple floating value "animations".
 Use this library for time based interpolations between two values.
 
 As **TOValueTransition** supports many easing functions, you might want to use it as animation library to easily animate your views.
 
-##Setup
+## Setup
 
 **CocoaPods**   
 Simply add `pod 'TOValueTransition', '~> 1.0.1'` to your podfile.  
@@ -15,7 +15,7 @@ For more information about CocoaPods and the podfile visit http://guides.cocoapo
 Add all files from /TOValueTransition to your project and target.  
 
 
-##Usage
+## Usage
 In the end there is only one important static method for **TOValueTransition**.  
 
     /**
@@ -55,5 +55,5 @@ To cancel a transition you can call `-(BOOL)cancel;` This will stop the progress
 
 If you take a look at the Sample project (it's an ios application) you can see how to use TOValueTransition to animate a white dot on the screen.
 
-##Contact
+## ontact
 For any questions or information feel free to contact me  [@toastedtoast](http://www.twitter.com/toastedtoast)
